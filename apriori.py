@@ -8,7 +8,9 @@ def read_data(filename, limit=1000):
 		i = 0
 		for row in reader:
 			i += 1
-			if (i > limit + 1):
+			if i == 1:
+				continue
+			elif (i > limit + 1):
 				break
 			yield row
 
