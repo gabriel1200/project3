@@ -123,7 +123,7 @@ def confidence(x, y, data):
 	return supp, supp / _supp({x}, data)
 
 
-def apriori(data, min_sup, min_conf):
+def apriori(data, min_sup, min_conf, size):
 	"""Creates a frequest itemset using a given candidate set Ck
 
 	:Input:
@@ -131,6 +131,7 @@ def apriori(data, min_sup, min_conf):
 	 	the frequency count.
 	 - min_sup (float) Minimum support
 	 - min_conf (float) Minimum confidence for association rules
+	 - size (int) Number of data points
 
 	:Output:
 	 - (list) list of frequent itemsets. Each item is a frozenset.
@@ -149,13 +150,13 @@ def apriori(data, min_sup, min_conf):
 	rules = []
 	for l in L:
 		for s in L[l]:
-			print(list(s), ", %.3f" % (_supp(s, data) / 395672))
+			print(list(s), ", %.3f" % (_supp(s, data) / size))
 			for x in s:
 				# calculate the association with all other elements in set
 				for y in s - {x}:
 					supp, conf = confidence(x, y, data)
 					if conf >= min_conf:
-						rules.append((x,y,conf, supp / 395672))
+						rules.append((x,y,conf, supp / size))
 	return rules, L
 
 if __name__ == "__main__":
@@ -168,17 +169,19 @@ if __name__ == "__main__":
 		# print("Usage:\n\tpython <filename> <min_sup> <min_conf>")
 		sys.exit("Usage:\n\t./run <filename> <min_sup> <min_conf>")
 
-	# there are 395672 rows not inlcuding the title
-	limit = 395672
+	# find size of dataset. do not include row for column titles
+	with open(filename) as f:
+		size=sum(1 for _ in f)
+	limit = size - 1
 
-	print("==Frequent itemsets (min_sup=%.2f%%)" % (min_sup * 100))
+	print("==Frequent itemsets (min_sup=%.3f%%)" % (min_sup * 100))
 
 	# Read data and execute apriori algorithm
 	data = read_data(filename, limit=limit)
 	data = list(map(set, data))
-	rules, L = apriori(data, min_sup * limit, min_conf)
+	rules, L = apriori(data, min_sup * limit, min_conf, size - 1)
 	
 	# Print the confidence for each rule
-	print("==High-confidence association rules (min_conf=%.2f%%)" % (min_conf * 100))
+	print("==High-confidence association rules (min_conf=%.3f%%)" % (min_conf * 100))
 	for rule in rules:
 		print("[%s] => [%s] (Conf: %.3f, Supp: %.3f)" % rule)
