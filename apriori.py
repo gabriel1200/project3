@@ -4,8 +4,13 @@ import csv
 from functools import reduce
 
 def read_data(filename, limit=1000):
-	"""
-	Yields a generator with the data
+	"""Yields a generator with the data
+	:Input:
+	 - filename (string) Filename of data to read
+	 - limit (int) number of rows to read
+
+	:Output:
+	 - (generator) generator of lists containing data.
 	"""
 	with open(filename, newline='') as csvfile:
 		reader = csv.reader(csvfile, delimiter=",", quotechar='"')
@@ -22,6 +27,17 @@ def read_data(filename, limit=1000):
 			yield [row[i] for i in (2,5,7,8,11,12,14,17)]
 
 def createC1(data):
+	"""Generates the first candidate set.
+
+	:Input:
+	 - data (list) A list of sets, where each set is a transaction. Candidate
+	 	set will be created using this data.
+
+	:Output:
+	 - (dict) A candidate set generated from the data
+	 	Key: frozenset(candidate set)
+	 	Value: number of occurences in data
+	"""
 	C1 = {}
 	for transaction in data:
 		for item in transaction:
@@ -34,7 +50,18 @@ def createC1(data):
 
 
 def createL(Ck, min_sup):
+	"""Creates a frequest itemset using a given candidate set Ck
+
+	:Input:
+	 - Ck (dict) The candidate set. Keys are the candidates and values are
+	 	the frequency count.
+	 - min_sup (float) Minimum support
+
+	:Output:
+	 - (list) list of frequent itemsets. Each item is a frozenset.
+	"""
 	L = []
+	# Prune candidate set based on miniumum support
 	for can in Ck:
 		if Ck[can] >= min_sup:
 			L.append(can)
@@ -42,6 +69,18 @@ def createL(Ck, min_sup):
 
 
 def apriori_gen(data, Lk, k):
+	"""Generate a new candidate set for apriori algorithm
+	
+	:Input:
+	 - data (list)
+	 - Lk (list) previous iteration's frequent itemset
+	 - k (int) number of items to include in the itemset
+
+	:Output:
+	 - (dict) A candidate set generated from the data
+	 	Key: frozenset(candidate set)
+	 	Value: number of occurences in data
+	"""
 	Ck = {}
 	itemset = reduce(lambda x,y: x.union(y), Lk)
 	for l in Lk:
@@ -58,6 +97,7 @@ def apriori_gen(data, Lk, k):
 	return Ck
 
 def _supp(x, data):
+	# calculate the support
 	support = 0
 	for transaction in data:
 		if x <= transaction:
@@ -65,10 +105,23 @@ def _supp(x, data):
 	return support
 
 def confidence(x, y, data):
-	return _supp({x, y}, data) / _supp({x}, data)
+	# calculate the confidence and support of association rule
+	supp = _supp({x, y}, data)
+	return supp, supp / _supp({x}, data)
 
 
 def apriori(data, min_sup, min_conf):
+	"""Creates a frequest itemset using a given candidate set Ck
+
+	:Input:
+	 - Ck (dict) The candidate set. Keys are the candidates and values are
+	 	the frequency count.
+	 - min_sup (float) Minimum support
+	 - min_conf (float) Minimum confidence for association rules
+
+	:Output:
+	 - (list) list of frequent itemsets. Each item is a frozenset.
+	"""
 	L = {}
 	Ck = createC1(data)
 	L[1] = createL(Ck, min_sup)
@@ -80,16 +133,16 @@ def apriori(data, min_sup, min_conf):
 		k += 1
 
 	# calculate association rules
-	
 	rules = []
 	for l in L:
 		for s in L[l]:
 			print(list(s), ", %.3f" % (_supp(s, data) / 395672))
 			for x in s:
+				# calculate the association with all other elements in set
 				for y in s - {x}:
-					conf = confidence(x, y, data)
+					supp, conf = confidence(x, y, data)
 					if conf >= min_conf:
-						rules.append((x,y,conf))
+						rules.append((x,y,conf, supp / 395672))
 	return rules, L
 
 if __name__ == "__main__":
@@ -99,20 +152,20 @@ if __name__ == "__main__":
 		min_conf = float(min_conf)
 	except Exception as e:
 		print(e)
-		print("Usage:\n\tpython <filename> <min_sup> <min_conf>")
-		sys.exit('System will exit')
+		# print("Usage:\n\tpython <filename> <min_sup> <min_conf>")
+		sys.exit("Usage:\n\t./run <filename> <min_sup> <min_conf>")
 
 	# there are 395672 rows not inlcuding the title
-	print("Filename:", filename)
-	print("Min support:", min_sup)
-	print("Min confidence:", min_conf)
-
 	limit = 395672
+
 	print("==Frequent itemsets (min_sup=%.2f%%)" % (min_sup * 100))
+
+	# Read data and execute apriori algorithm
 	data = read_data(filename, limit=limit)
 	data = list(map(set, data))
 	rules, L = apriori(data, min_sup * limit, min_conf)
 	
+	# Print the confidence for each rule
 	print("==High-confidence association rules (min_conf=%.2f%%)" % (min_conf * 100))
 	for rule in rules:
-		print(rule[0],"=>",rule[1], "\nConfidence:", rule[2])
+		print("[%s] => [%s] (Conf: %.3f, Supp: %.3f)" % rule)

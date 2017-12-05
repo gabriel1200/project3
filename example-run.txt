@@ -1,0 +1,29 @@
+==Frequent itemsets (min_sup=8.00%)
+['MANHATTAN'] , 0.195
+['BROOKLYN'] , 0.120
+['Non-food contact surface improperly constructed. Unacceptable material used. Non-food contact surface or equipment improperly maintained and/or not properly sealed, raised, spaced or movable to allow accessibility for cleaning on all sides, above and underneath the unit.'] , 0.098
+['Cycle Inspection / Initial Inspection'] , 0.191
+['Not Critical'] , 0.232
+['A'] , 0.391
+['American'] , 0.114
+['Cycle Inspection / Re-inspection'] , 0.247
+['QUEENS'] , 0.114
+['Critical'] , 0.255
+['QUEENS', 'A'] , 0.091
+['Cycle Inspection / Re-inspection', 'A'] , 0.163
+['Critical', 'A'] , 0.190
+['A', 'MANHATTAN'] , 0.157
+['American', 'A'] , 0.095
+['Cycle Inspection / Initial Inspection', 'A'] , 0.191
+['Not Critical', 'A'] , 0.198
+['A', 'Non-food contact surface improperly constructed. Unacceptable material used. Non-food contact surface or equipment improperly maintained and/or not properly sealed, raised, spaced or movable to allow accessibility for cleaning on all sides, above and underneath the unit.'] , 0.089
+['BROOKLYN', 'A'] , 0.095
+==High-confidence association rules (min_conf=70.00%)
+[QUEENS] => [A] (Conf: 0.794, Supp: 0.091)
+[Critical] => [A] (Conf: 0.745, Supp: 0.190)
+[MANHATTAN] => [A] (Conf: 0.803, Supp: 0.157)
+[American] => [A] (Conf: 0.835, Supp: 0.095)
+[Cycle Inspection / Initial Inspection] => [A] (Conf: 1.000, Supp: 0.191)
+[Not Critical] => [A] (Conf: 0.853, Supp: 0.198)
+[Non-food contact surface improperly constructed. Unacceptable material used. Non-food contact surface or equipment improperly maintained and/or not properly sealed, raised, spaced or movable to allow accessibility for cleaning on all sides, above and underneath the unit.] => [A] (Conf: 0.907, Supp: 0.089)
+[BROOKLYN] => [A] (Conf: 0.796, Supp: 0.095)
