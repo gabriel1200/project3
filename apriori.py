@@ -5,6 +5,19 @@ from functools import reduce
 
 def read_data(filename, limit=1000):
 	"""Yields a generator with the data
+	Only consider columns for:
+		'BORO'
+		'ZIPCODE'
+		'CUISINE DESCRIPTION'
+		'INSPECTION DATE'
+		'VIOLATION DESCRIPTION'
+		'CRITICAL FLAG'
+		'GRADE'
+		'INSPECTION TYPE'
+	
+	We do not consider columns for:
+		['CAMIS', 'DBA', 'BUILDING', 'STREET', 'PHONE', 'ACTION', 'VIOLATION CODE', 'SCORE', 'GRADE DATE', 'RECORD DATE']
+
 	:Input:
 	 - filename (string) Filename of data to read
 	 - limit (int) number of rows to read
